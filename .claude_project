@@ -2,7 +2,7 @@
   "mcpServers": {
     "macos-calendar": {
       "command": "node",
-      "args": ["macos-calendar-mcp.js"]
+      "args": ["macos-calendar-mcp-sdk.js"]
     }
   }
 }

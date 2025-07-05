@@ -2,19 +2,19 @@
   "name": "macos-calendar-mcp",
   "version": "1.0.0",
   "description": "A Model Context Protocol (MCP) server for macOS Calendar integration using AppleScript",
-  "main": "macos-calendar-mcp.js",
+  "main": "macos-calendar-mcp-sdk.js",
   "type": "module",
   "bin": {
-    "macos-calendar-mcp": "./macos-calendar-mcp.js"
+    "macos-calendar-mcp": "./macos-calendar-mcp-sdk.js"
   },
   "scripts": {
-    "start": "node macos-calendar-mcp.js",
+    "start": "node macos-calendar-mcp-sdk.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "mcp",
     "calendar",
-    "macos", 
+    "macos",
     "applescript",
     "claude",
     "ai"
@@ -32,5 +32,10 @@
   "engines": {
     "node": ">=16.0.0"
   },
-  "os": ["darwin"]
+  "os": [
+    "darwin"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.0"
+  }
 }
