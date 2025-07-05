@@ -1,0 +1,36 @@
+{
+  "name": "macos-calendar-mcp",
+  "version": "1.0.0",
+  "description": "A Model Context Protocol (MCP) server for macOS Calendar integration using AppleScript",
+  "main": "macos-calendar-mcp.js",
+  "type": "module",
+  "bin": {
+    "macos-calendar-mcp": "./macos-calendar-mcp.js"
+  },
+  "scripts": {
+    "start": "node macos-calendar-mcp.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mcp",
+    "calendar",
+    "macos", 
+    "applescript",
+    "claude",
+    "ai"
+  ],
+  "author": "xybstone",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xybstone/macos-calendar-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xybstone/macos-calendar-mcp/issues"
+  },
+  "homepage": "https://github.com/xybstone/macos-calendar-mcp#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "os": ["darwin"]
+}
