@@ -155,3 +155,18 @@ Unlike Google Calendar integrations that require complex OAuth setups, this MCP:
 - ✅ Respects your privacy - everything runs locally
 
 Perfect for developers who want calendar integration without the OAuth headache!
+
+## Privacy & Security
+
+- ✅ **Local Processing**: All calendar operations run locally on your machine
+- ✅ **No Data Upload**: Your calendar data never leaves your device
+- ✅ **Privacy Focused**: No OAuth tokens, no cloud services, no tracking
+- ⚠️ **Private Data**: When testing, avoid committing files containing personal events to public repositories
+
+## Data Protection
+
+The project includes `.gitignore` patterns to prevent accidental commits of private event data:
+- `*events*.json` - Event data files
+- `*meetings*.json` - Meeting schedules  
+- `*schedule*.json` - Schedule files
+- `private-*.json` - Any private data files

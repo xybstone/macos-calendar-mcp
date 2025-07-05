@@ -123,6 +123,12 @@ dist/
 .yarn/install-state.gz
 .pnp.*
 
+# Private event data - DO NOT COMMIT
+*events*.json
+*meetings*.json
+*schedule*.json
+private-*.json
+
 # macOS
 .DS_Store
 .AppleDouble
