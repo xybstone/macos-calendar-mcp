@@ -264,26 +264,35 @@ class MacOSCalendarServer {
     });
   }
 
-  // 修复时间格式转换
+  // 修复时间格式转换 - 使用原生macOS时间设置避免时区问题
   formatDateForAppleScript(dateStr) {
     // 输入格式：YYYY-MM-DD HH:MM
-    // 输出格式：MM/DD/YYYY H:MM:SS AM/PM
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) {
-      throw new Error(`无效的日期格式: ${dateStr}`);
+    const [datePart, timePart] = dateStr.split(' ');
+    const [year, month, day] = datePart.split('-').map(Number);
+    const [hour, minute] = timePart.split(':').map(Number);
+    
+    if (!year || !month || !day || hour === undefined || minute === undefined) {
+      throw new Error(`无效的日期格式: ${dateStr}，请使用 YYYY-MM-DD HH:MM 格式`);
     }
     
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const year = date.getFullYear();
-    let hour = date.getHours();
-    const minute = date.getMinutes();
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    
-    if (hour > 12) hour -= 12;
-    if (hour === 0) hour = 12;
-    
-    return `${month}/${day}/${year} ${hour}:${minute.toString().padStart(2, '0')}:00 ${ampm}`;
+    return {
+      year,
+      month,
+      day,
+      hour,
+      minute
+    };
+  }
+
+  // 生成AppleScript时间设置代码
+  generateTimeScript(dateInfo, variableName = 'eventDate') {
+    return `
+      set ${variableName} to current date
+      set year of ${variableName} to ${dateInfo.year}
+      set month of ${variableName} to ${dateInfo.month}
+      set day of ${variableName} to ${dateInfo.day}
+      set time of ${variableName} to (${dateInfo.hour} * hours + ${dateInfo.minute} * minutes)
+    `;
   }
 
   async listCalendars() {
@@ -308,16 +317,20 @@ class MacOSCalendarServer {
   async createEvent(args) {
     const { calendar = '个人', title, startDate, endDate, description = '', location = '' } = args;
     
-    const formattedStart = this.formatDateForAppleScript(startDate);
-    const formattedEnd = this.formatDateForAppleScript(endDate);
+    const startInfo = this.formatDateForAppleScript(startDate);
+    const endInfo = this.formatDateForAppleScript(endDate);
+    
+    const startTimeScript = this.generateTimeScript(startInfo, 'startTime');
+    const endTimeScript = this.generateTimeScript(endInfo, 'endTime');
 
     const script = `
       tell application "Calendar"
         set theCalendar to calendar "${calendar}"
-        set startDate to date "${formattedStart}"
-        set endDate to date "${formattedEnd}"
         
-        make new event at end of events of theCalendar with properties {summary:"${title}", start date:startDate, end date:endDate, description:"${description}", location:"${location}"}
+        ${startTimeScript}
+        ${endTimeScript}
+        
+        make new event at end of events of theCalendar with properties {summary:"${title}", start date:startTime, end date:endTime, description:"${description}", location:"${location}"}
       end tell
     `;
 
@@ -344,16 +357,20 @@ class MacOSCalendarServer {
 
     for (const event of events) {
       try {
-        const formattedStart = this.formatDateForAppleScript(event.startDate);
-        const formattedEnd = this.formatDateForAppleScript(event.endDate);
+        const startInfo = this.formatDateForAppleScript(event.startDate);
+        const endInfo = this.formatDateForAppleScript(event.endDate);
+        
+        const startTimeScript = this.generateTimeScript(startInfo, 'startTime');
+        const endTimeScript = this.generateTimeScript(endInfo, 'endTime');
 
         const script = `
           tell application "Calendar"
             set theCalendar to calendar "${calendar}"
-            set startDate to date "${formattedStart}"
-            set endDate to date "${formattedEnd}"
             
-            make new event at end of events of theCalendar with properties {summary:"${event.title}", start date:startDate, end date:endDate, description:"${event.description || ''}", location:"${event.location || ''}"}
+            ${startTimeScript}
+            ${endTimeScript}
+            
+            make new event at end of events of theCalendar with properties {summary:"${event.title}", start date:startTime, end date:endTime, description:"${event.description || ''}", location:"${event.location || ''}"}
           end tell
         `;
 
@@ -604,8 +621,11 @@ class MacOSCalendarServer {
         const newStartDateTime = `${datePattern} ${correction.newStartTime}`;
         const newEndDateTime = `${datePattern} ${correction.newEndTime}`;
         
-        const formattedStart = this.formatDateForAppleScript(newStartDateTime);
-        const formattedEnd = this.formatDateForAppleScript(newEndDateTime);
+        const startInfo = this.formatDateForAppleScript(newStartDateTime);
+        const endInfo = this.formatDateForAppleScript(newEndDateTime);
+        
+        const startTimeScript = this.generateTimeScript(startInfo, 'newStartTime');
+        const endTimeScript = this.generateTimeScript(endInfo, 'newEndTime');
 
         const script = `
           tell application "Calendar"
@@ -613,10 +633,13 @@ class MacOSCalendarServer {
             set allEvents to every event of theCalendar
             set fixedCount to 0
             
+            ${startTimeScript}
+            ${endTimeScript}
+            
             repeat with anEvent in allEvents
               if (summary of anEvent) contains "${correction.keyword}" then
-                set start date of anEvent to date "${formattedStart}"
-                set end date of anEvent to date "${formattedEnd}"
+                set start date of anEvent to newStartTime
+                set end date of anEvent to newEndTime
                 set fixedCount to fixedCount + 1
               end if
             end repeat

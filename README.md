@@ -93,11 +93,17 @@ node macos-calendar-mcp.js
 
 ## Date Format
 
-Use the format: `YYYY-MM-DD HH:MM`
+Use the format: `YYYY-MM-DD HH:MM` (24-hour format)
 
 Examples:
-- `2025-07-05 14:00`
-- `2025-12-25 09:30`
+- `2025-07-05 14:00` (2:00 PM)
+- `2025-12-25 09:30` (9:30 AM)
+- `2025-07-10 18:00` (6:00 PM)
+
+**Time Zone Handling:**
+- Uses native macOS time handling to avoid timezone conversion issues
+- All times are interpreted in your system's local timezone
+- No UTC conversion or daylight saving adjustments needed
 
 ## Supported Calendars
 
@@ -119,6 +125,13 @@ If you get permission errors:
 - Ensure Calendar app is installed and accessible
 - Check calendar names are correct (case-sensitive)
 - Verify date formats match the expected pattern
+
+### Time Zone Issues
+If events appear at wrong times:
+1. Check your system timezone settings
+2. Use the `fix-event-times` tool to correct existing events
+3. Ensure date format is `YYYY-MM-DD HH:MM` in 24-hour format
+4. The MCP uses native macOS time handling to avoid conversion issues
 
 ## Contributing
 
