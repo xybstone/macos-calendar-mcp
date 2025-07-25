@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server for seamless macOS Calendar integration using AppleScript. No OAuth setup required!
 
+<a href="https://glama.ai/mcp/servers/@xybstone/macos-calendar-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@xybstone/macos-calendar-mcp/badge" alt="macOS Calendar Server MCP server" />
+</a>
+
 ## Features
 
 - 🍎 **Native macOS Integration** - Uses AppleScript to interact directly with macOS Calendar
